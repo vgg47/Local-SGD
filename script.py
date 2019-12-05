@@ -4,7 +4,7 @@ import scipy.stats as sts
 import sys
 
 from console_args import console_args
-from gradient_computing import gradient_step, sync, choose_step_size
+from gradient_computing import gradient_step, sync, choose_step_size, mse_metric
 from mpi4py import MPI
 from numpy import loadtxt
 from scipy.spatial import distance
@@ -14,19 +14,26 @@ args = console_args()
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
-steps_number = int(sys.argv[0])
-communications_number = int(sys.argv[1])
+steps_number = args.steps
+communications_number = args.precision
 
 if rank == 0:  
     
     # генерируем последовательность таймстемпов для синхронизаций
-    sync_timestamps = np.sort(sts.randint.rvs(low=0, high=steps_number, size=communications_number))
-    sync_timestamps2 = np.sort(np.array(random.sample(range(steps_number), communications_number)))
+    # sync_timestamps = np.sort(sts.randint.rvs(low=0, high=steps_number, size=communications_number))
+    sync_timestamps = np.sort(np.array(random.sample(range(steps_number), communications_number)))
     
     # загружаем данные из файлов
     full_data = loadtxt('./data/data.csv', delimiter=',')
-    full_labels = loadtxt('./data/label.csv', delimiter=',')
-    w = np.random.rand(full_data.shape[1] + 1)
+    full_labels = loadtxt('./data/label.csv', delimiter=',')    
+
+    full_data = np.hstack([np.ones((full_data.shape[0], 1)), full_data])
+
+    feature_number = full_data.shape[1]
+    np.random.seed(17)
+    w = np.hstack([1 , np.random.rand(feature_number - 1)])
+    print(w)
+
     # определяем размер батча для каждого воркера
     batch_size = int(full_data.shape[0] / comm.Get_size())
     
@@ -35,7 +42,7 @@ if rank == 0:
         
         # отправляем размер батча и количество фичей        
         comm.send(batch_size, dest=idx, tag=75)
-        comm.send(full_data.shape[1] + 1, dest=idx, tag=76)
+        comm.send(feature_number, dest=idx, tag=76)
         
         # отправляем начальные веса, таймстемпы, данные и метки !!!! здесь можно заменить на gathering
         comm.Send(w, dest=idx, tag=74) 
@@ -70,7 +77,7 @@ else:
 min_weight_dist = 10 ** -6 # тут заглушка!!!
 weight_dist = np.inf
 cur_step = 0
-
+print(mse_metric(X, y, w))
 # работа алгоритма завершается, если  шаг градиентного метода меньше
 # заданного значения или же после определенного количества шагов 
 while (cur_step < steps_number and weight_dist > min_weight_dist):
@@ -83,4 +90,9 @@ while (cur_step < steps_number and weight_dist > min_weight_dist):
         w_new = sync(w_new) # тут заглушка!!!
     # смотрим на то, как сильно изменились веса
     weight_dist = distance.euclidean(w, w_new)
+    w = w_new
+    if rank == 0 and cur_step % 100 == 0:
+        print(mse_metric(X, y, w))
+
     cur_step += 1
+

@@ -29,8 +29,7 @@ def mse_grad(X, y, w):
 
 def gradient_step(X, y, w, step_size):
     ''' Делает шаг градиентного спуска '''
-    return w - step_size * 2. * X @ (X @ w - y) / y.size
-
+    return w - step_size * 2. * X.T @ (X @ w - y) / y.size
 
 def sync(w_new):
     # заглушка
@@ -38,4 +37,5 @@ def sync(w_new):
 
 def choose_step_size(cur_step):
     # заглушка
-    return 0.01 / cur_step
+    # return 0.01 / (cur_step + 1)
+    return 10 ** -3
