@@ -31,8 +31,15 @@ def gradient_step(X, y, w, step_size):
     ''' Делает шаг градиентного спуска '''
     return w - step_size * 2. * X.T @ (X @ w - y) / y.size
 
-def sync(w_new):
-    # заглушка
+def sync(w_new, comm):
+    # print(f'trying to synchronize from {comm.Get_rank()}')
+    w_new = comm.gather(w_new, root=0)
+    # print(f'synchronization completed for {comm.Get_rank()}')
+    if comm.Get_rank() == 0:
+        w_new = np.mean(w_new, axis=0)
+    w_new = comm.bcast(w_new, root=0)
+    # print(f'new value for weigths are received by {comm.Get_rank()}')
+
     return w_new
 
 def choose_step_size(cur_step):

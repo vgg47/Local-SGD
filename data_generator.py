@@ -5,14 +5,15 @@ import scipy.stats as sts
 from numpy import asarray
 from numpy import savetxt
 
+dataset_size = int(sys.argc[0])
+feature_number = int(sys.argc[1])
 
 def f(x):
     return x @ sts.uniform.rvs(size=feature_number)
     
-feature_number = sts.randint(10000)
-X = np.random.rand(100000, feature_number)
-y = f(X) + sts.norm(0, scale=0.3).rvs(size=100000)
+X = np.random.rand(dataset_size, feature_number)
+y = f(X) + sts.norm(0, scale=0.1).rvs(size=dataset_size)
 
 # save to csv file
 savetxt('./data/data1.csv', X, delimiter=',')
-savetxt('data/label1.csv', y, delimiter=',')
+savetxt('./data/label1.csv', y, delimiter=',')

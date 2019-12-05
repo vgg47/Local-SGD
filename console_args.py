@@ -14,9 +14,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Stohastic Gradient Descent',
                                      prog='sgd', fromfile_prefix_chars='@')
     parser.add_argument('--steps', '-s', type=int,
-                        help='Запуск алгоритма на указанное количество шагов', default=10**6)
-    parser.add_argument('--sync',
-                        help='WIP')
+                        help='Запуск алгоритма на указанное количество шагов', default=10**3)
+    parser.add_argument('--sync', type=int,
+                        help='WIP', default=1)
     parser.add_argument('--dataset', '-d',
                         help='Путь к файлу с dataset', required=True)
     parser.add_argument('--label', '-l',
@@ -25,8 +25,8 @@ def parse_args():
                         help='python-script, содержащий реализацию \
                         функции metrics для метрики и grad для \
                         её производной')
-    parser.add_argument('--precision', '-p', type=int,
-                        help='тудуду', default=1)
+    parser.add_argument('--precision', '-p', type=float,
+                        help='тудуду', default=10 ** -8)
     return parser.parse_args()
 
 '''
@@ -39,8 +39,8 @@ def console_args():
     # print(args.label)
     # print(args.metrics)
 
-    m = importlib.import_module(args.metrics)
-    func = m.metrics
+    # m = importlib.import_module(args.metrics)
+    # func = m.metrics
     # func()
 
     return args
