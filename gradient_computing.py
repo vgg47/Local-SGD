@@ -12,7 +12,7 @@ def mse_metric(X, y, w):
         y - target feature
         w - weights
     '''
-    return (y - X @ w).transpose().dot(y - X @ w) / (2 * len(y))
+    return (y - X @ w).T.dot(y - X @ w) / (2 * len(y))
 
 def mae_metric(y, y_pred):
     return sum(np.abs(y - y_pred)) / len(y)
@@ -25,11 +25,11 @@ def mse_grad(X, y, w):
         y - target feature
         w - weights
     '''
-    return (-X.transpose() @ y +  X.transpose() @ X.dot(w)) / X.shape[0]
+    return X.T @ (X @ w - y) / X.shape[0]
 
-def gradient_step(X, y, w, step_size):
+def gradient_step(X, y, w, batch_idxs, step_size):
     ''' Делает шаг градиентного спуска '''
-    return w - step_size * 2. * X.T @ (X @ w - y) / y.size
+    return w - step_size * 2. * X[batch_idxs].T @ (X[batch_idxs] @ w - y[batch_idxs]) / len(batch_idxs)
 
 def sync(w_new, comm):
     # print(f'trying to synchronize from {comm.Get_rank()}')
@@ -46,3 +46,31 @@ def choose_step_size(cur_step):
     # заглушка
     # return 0.01 / (cur_step + 1)
     return 10 ** -3
+
+################################################################
+
+def L(X, y, w, grad=mse_grad):
+    '''
+    Считает константу Липшица 
+    как супремум нормы производной
+    '''
+    return np.max(np.linalg.norm(grad(X, y, w)))
+
+def myu(X, grad=mse_grad):
+    '''
+    Считает константу мю сильной выпуклости
+    как минимум по второй производной
+    '''
+    return np.min(2. * X.T @ X)
+
+def stepsize(cur_step, max_gap, X, y, w, grad=mse_grad):
+    '''
+    Размер шага = 4 / myu(a + t), где
+    a = max(16k, H) - параметр сдвига,
+    k = L / myu
+    '''
+    m = myu(X, grad)
+    k = L(X, y, w, grad)
+    a = max(16 * k, max_gap)
+
+    return 4 / (m * (a + cur_step))

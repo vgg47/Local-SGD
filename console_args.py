@@ -23,8 +23,10 @@ def parse_args():
                         help='Путь к файлу с label', required=True)
     parser.add_argument('--metrics', '-m',
                         help='python-script, содержащий реализацию \
-                        функции metrics для метрики и grad для \
-                        её производной')
+                        функции metrics для метрики и grad(X, y, w) для \
+                        производной')
+    parser.add_argument('--batch-size', '-b', type=int,
+                        help='Размер batch', default=10)
     parser.add_argument('--precision', '-p', type=float,
                         help='тудуду', default=10 ** -8)
     return parser.parse_args()
