@@ -18,15 +18,15 @@ def parse_args():
     parser.add_argument('--sync', type=int,
                         help='WIP', default=1)
     parser.add_argument('--dataset', '-d',
-                        help='Путь к файлу с dataset', required=True)
+                        help='Путь к файлу с dataset', default='./data/default_data.csv')
     parser.add_argument('--label', '-l',
-                        help='Путь к файлу с label', required=True)
+                        help='Путь к файлу с label', default='./data/default_labels.csv')
     parser.add_argument('--metrics', '-m',
                         help='python-script, содержащий реализацию \
                         функции metrics для метрики и grad(X, y, w) для \
                         производной')
     parser.add_argument('--batch-size', '-b', type=int,
-                        help='Размер batch', default=10)
+                        help='Размер batch', default=16)
     parser.add_argument('--precision', '-p', type=float,
                         help='тудуду', default=10 ** -8)
     return parser.parse_args()
