@@ -37,7 +37,7 @@ if rank == 0:
     w = np.hstack([np.arange(1, feature_number + 1)])
 
     # w = np.hstack([1 , np.random.rand(feature_number - 1)])
-    print(w)
+    print(f'initial weights: {w}')
     print(f'mse for random weights {mse_metric(full_data, full_labels, w)}')
 
 
