@@ -1,20 +1,25 @@
 # файлик генерит игрушечный датасет для обучения и дебага
 from numpy import asarray
 from numpy import savetxt
-import numpy as np 
-import scipy.stats as sts 
-import sys
+import numpy as np
+import scipy.stats as sts
 
 dataset_size = int(input('Введи количество строк в генерируемом датасете'))
 feature_number = int(input('Введи количество фичей в генерируемом датасете'))
 dataset_name = input('Введи название для файла, хранящего датасет, например data.csv')
 labels_name = input('Введи название для файла, хранящего целевую переменную, например labels.csv')
 print('Созданные файлы находятся в директории ./data')
+# dataset_size = 10
+# feature_number = 10
+# dataset_name = "data1.csv"
+# labels_name = "labels.csv"
 
 def f(x):
     return x @ sts.uniform.rvs(size=feature_number)
-    
-X = np.random.rand(dataset_size, feature_number)
+
+
+# X = np.random.rand(dataset_size, feature_number)
+X = sts.uniform.rvs(loc=1, scale=1, size=(dataset_size, feature_number))
 y = f(X) + sts.norm(0, scale=0.1).rvs(size=dataset_size)
 
 # save to csv file

@@ -4,8 +4,8 @@
 import numpy as np 
 import scipy.stats as sts 
 
-full_data = np.loadtxt('./data/data.csv', delimiter=',')
-full_labels = np.loadtxt('./data/label.csv', delimiter=',')
+full_data = np.loadtxt('./data/data1.csv', delimiter=',')
+full_labels = np.loadtxt('./data/label1.csv', delimiter=',')
 
 def mse_metric(X, y, w):
     ''' X - dataset
@@ -49,28 +49,46 @@ def choose_step_size(cur_step):
 
 ################################################################
 
-def L(X, y, w, grad=mse_grad):
-    '''
-    Считает константу Липшица 
-    как супремум нормы производной
-    '''
-    return np.max(np.linalg.norm(grad(X, y, w)))
+# def L(X, y, w, grad=mse_grad):
+#     '''
+#     Считает константу Липшица
+#     как супремум нормы производной
+#     '''
+#     return np.max(np.linalg.norm(grad(X, y, w)))
 
-def myu(X, grad=mse_grad):
-    '''
-    Считает константу мю сильной выпуклости
-    как минимум по второй производной
-    '''
-    return np.min(2. * X.T @ X)
 
-def stepsize(cur_step, max_gap, X, y, w, grad=mse_grad):
-    '''
-    Размер шага = 4 / myu(a + t), где
-    a = max(16k, H) - параметр сдвига,
-    k = L / myu
-    '''
-    m = myu(X, grad)
-    k = L(X, y, w, grad)
-    a = max(16 * k, max_gap)
+def L(X):
+    return np.max(np.linalg.eig(2 * X.T @ X)[0])
 
-    return 4 / (m * (a + cur_step))
+
+def mu(X):
+    return np.min(np.linalg.eig(2 * X.T @ X)[0])
+
+#
+# def myu(X, grad=mse_grad):
+#     '''
+#     Считает константу мю сильной выпуклости
+#     как минимум по второй производной
+#     '''
+#     return np.min(2. * X.T @ X)
+#
+# def stepsize(cur_step, max_gap, X, y, w, grad=mse_grad):
+#     '''
+#     Размер шага = 4 / myu(a + t), где
+#     a = max(16k, H) - параметр сдвига,
+#     k = L / myu
+#     '''
+#     m = myu(X, grad)
+#     k = L(X, y, w, grad)
+#     a = max(16 * k, max_gap)
+#
+#     return 4 / (m * (a + cur_step))
+
+
+def a(X, max_gap):
+    k = L(X) / mu(X)
+    return max(16 * k, max_gap)
+
+
+def stepsize(X, cur_step, max_gap):
+    return 4 / (mu(X) * (a(X, max_gap) + cur_step))
