@@ -5,7 +5,7 @@ import sys
 import time
 
 from console_args import console_args
-from gradient_computing import gradient_step, sync, choose_step_size, mse_metric
+from gradient_computing import gradient_step, sync, choose_step_size, mse_metric, stepsize
 from mpi4py import MPI
 from numpy import loadtxt
 from scipy.spatial import distance
@@ -95,7 +95,8 @@ while (cur_step < steps_number and weight_dist > min_weight_dist):
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
 
     # выбираем размер шага (learning rate)
-    step_size = choose_step_size(cur_step) # тут заглушка!!!
+    # step_size = choose_step_size(cur_step) # тут заглушка!!!
+    step_size = stepsize(X, cur_step, communications_number)
     # делаем шаг
     w_new  = gradient_step(X, y, w, batch_idxs, step_size)
     # если текущий таймстемп лежит в множестве синхронизируемых, то синхронизируемся))
