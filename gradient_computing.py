@@ -4,8 +4,6 @@
 import numpy as np 
 import scipy.stats as sts 
 
-full_data = np.loadtxt('./data/data1.csv', delimiter=',')
-full_labels = np.loadtxt('./data/label1.csv', delimiter=',')
 
 def mse_metric(X, y, w):
     ''' X - dataset
