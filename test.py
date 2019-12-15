@@ -44,6 +44,7 @@ def experiment(mse_test, X, y, method, init=None, sample_size=5):
 
     return np.array(sizes), np.array(times)
 
+
 args = parse_args()
 X = loadtxt(args.dataset, delimiter=',')
 y = loadtxt(args.label, delimiter=',')  
@@ -51,8 +52,9 @@ mse = functools.partial(mse_test, X=X, y=y)
 x_plot, y_plot = experiment(mse_test, X, y, 'nelder-mead')
 plt.plot(x_plot, y_plot, label='nelder-mead')
 plt.xticks(np.arange(5)+1, np.array(['$10^1$', '$10^2$', '$10^3$', '$10^4$', '$10^5$']))
-plt.ylabel('Time')
-plt.title('Зависимость времени работы методов от размера датасета')
+plt.xlabel('Размер', fontsize=15)
+plt.ylabel('Время', fontsize=15)
+plt.title('Зависимость времени работы методов от размера датасета', fontsize=15)
 plt.legend()
 plt.savefig('./img/test')
 #ans1 = minimize(mse, init)
