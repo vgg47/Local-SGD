@@ -1,1 +1,1 @@
-{"general_time": [], "steps": [], "algorithm_time": [], "mse": [], "workers": [], "version": []}
+{"general_time": [14.282902013, 14.351642703], "steps": [10000, 10000], "algorithm_time": [11.260341833, 11.255483042], "mse": [0.9523018537952872, 0.9523650844645637], "workers": [20, 20], "version": [1, 1]}
