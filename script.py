@@ -124,5 +124,6 @@ if rank == 0:
     logs['algorithm_time'].append(final_time - data_sending_time)
     logs['mse'].append(mse_metric(full_data, full_labels, w))
     logs['version'].append(VERSION)
+    logs['workers'].append(comm.size)
     with open('logs.json', 'w') as logfile:
         json.dump(logs, logfile)
