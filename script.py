@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import json
 import scipy.stats as sts
 import sys
 import time
@@ -9,6 +10,8 @@ from gradient_computing import gradient_step, sync, choose_step_size, mse_metric
 from mpi4py import MPI
 from numpy import loadtxt
 from scipy.spatial import distance
+
+VERSION = 1
 
 args = console_args()
 
@@ -114,3 +117,12 @@ if rank == 0:
     print(f'algorithm time is {final_time - data_sending_time}')
     print(f'general time is {final_time - start_time}')
     print(f'final value mse after {steps_number} for {comm.size} workers is {mse_metric(full_data, full_labels, w)}')
+    with open('logs.json') as logfile:
+        logs = json.load(logfile)
+    logs['general_time'].append(final_time - start_time)
+    logs['steps'].append(steps_number) # cur_step?
+    logs['algorithm_time'].append(final_time - data_sending_time)
+    logs['mse'].append(mse_metric(full_data, full_labels, w))
+    logs['version'].append(VERSION)
+    with open('logs.json', 'w') as logfile:
+        json.dump(logs, logfile)
