@@ -6,6 +6,7 @@ import time
 
 from data_generator import create_data
 from gradient_computing import mse_metric, mse_grad
+from nesterov import nesterov_descent
 from numpy import loadtxt
 from scipy.optimize import minimize
 
@@ -67,7 +68,7 @@ def make_plot(args):
 
 
 args = parse_args()
-make_plot(args)
+#make_plot(args)
 X = loadtxt(args.dataset, delimiter=',')
 y = loadtxt(args.label, delimiter=',')  
 mse = functools.partial(mse_test, X=X, y=y)
@@ -78,6 +79,16 @@ grad = functools.partial(mse_grad_test, X=X, y=y)
 init = np.ones(X.shape[1])
 #ans4 = minimize(mse, init, method='BFGS')
 #print(ans4)
-#ans5 = minimize(mse, init, method='BFGS', jac=grad)
+a = time.time()
+ans5 = minimize(mse, init, method='BFGS', jac=grad)
+b = time.time()
+print(b-a)
+#print(ans5)
 #print(ans5)
 #print(ans1.fun, ans2.fun, ans3.fun)
+L = 1#np.max(np.linalg.eig(2 * X.T @ X)[0])
+a = time.time()
+x = nesterov_descent(mse, L, init, grad)
+b = time.time()
+print(b-a)
+print(mse(x))
