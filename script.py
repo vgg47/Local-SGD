@@ -90,9 +90,10 @@ if rank == 0:
 
 cur_mse = 1 
 cur_step = 0
-# работа алгоритма завершается, если  шаг градиентного метода меньше
+stopping_criterion = True
+# работа алгоритма завершается, если  мсе меньше
 # заданного значения или же после определенного количества шагов 
-while cur_step < steps_number and cur_mse > min_mse:
+while cur_step < steps_number and stopping_criterion:
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
 
     # выбираем размер шага (learning rate)
@@ -105,6 +106,8 @@ while cur_step < steps_number and cur_mse > min_mse:
         w = sync(w, comm)
     # смотрим на то, как сильно изменились веса
     cur_mse = mse_metric(X, y, w)
+    if rank == 0 and cur_mse > min_mse:
+        stopping_criterion = comm.bcast(False, root=0)
     cur_step += 1
 
 w = sync(w, comm)
