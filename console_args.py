@@ -28,5 +28,5 @@ def console_args():
     parser.add_argument('--batch-size', '-b', type=int,
                         help='Размер batch', default=16)
     parser.add_argument('--precision', '-p', type=float,
-                        help='тудуду', default=10 ** -5)
+                        help='тудуду', default=10 ** -1)
     return parser.parse_args()
