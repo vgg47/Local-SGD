@@ -10,7 +10,7 @@ import importlib
 Аргументы для запуска из консоли
 @return: доступ к ним
 '''
-def parse_args():
+def console_args():
     parser = argparse.ArgumentParser(description='Stohastic Gradient Descent',
                                      prog='sgd', fromfile_prefix_chars='@')
     parser.add_argument('--steps', '-s', type=int,
@@ -30,21 +30,3 @@ def parse_args():
     parser.add_argument('--precision', '-p', type=float,
                         help='тудуду', default=10 ** -8)
     return parser.parse_args()
-
-'''
-Проверка ввода
-'''
-def console_args():
-    args = parse_args()
-    
-    # print(args.dataset)
-    # print(args.label)
-    # print(args.metrics)
-
-    # m = importlib.import_module(args.metrics)
-    # func = m.metrics
-    # func()
-
-    return args
-
-console_args()

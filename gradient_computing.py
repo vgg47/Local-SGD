@@ -47,40 +47,21 @@ def choose_step_size(cur_step):
 
 ################################################################
 
-# def L(X, y, w, grad=mse_grad):
+
+def L(X):
 #     '''
 #     Считает константу Липшица
 #     как супремум нормы производной
 #     '''
-#     return np.max(np.linalg.norm(grad(X, y, w)))
-
-
-def L(X):
     return np.max(np.linalg.eig(2 * X.T @ X)[0])
 
 
 def mu(X):
-    return np.min(np.linalg.eig(2 * X.T @ X)[0])
-
-#
-# def myu(X, grad=mse_grad):
-#     '''
+#    '''
 #     Считает константу мю сильной выпуклости
-#     как минимум по второй производной
+#     как минимальное собственное значение
 #     '''
-#     return np.min(2. * X.T @ X)
-#
-# def stepsize(cur_step, max_gap, X, y, w, grad=mse_grad):
-#     '''
-#     Размер шага = 4 / myu(a + t), где
-#     a = max(16k, H) - параметр сдвига,
-#     k = L / myu
-#     '''
-#     m = myu(X, grad)
-#     k = L(X, y, w, grad)
-#     a = max(16 * k, max_gap)
-#
-#     return 4 / (m * (a + cur_step))
+    return np.min(np.linalg.eig(2 * X.T @ X)[0])
 
 
 def a(X, max_gap):
@@ -89,4 +70,9 @@ def a(X, max_gap):
 
 
 def stepsize(X, cur_step, max_gap):
+#     '''
+#     Размер шага = 4 / myu(a + t), где
+#     a = max(16k, H) - параметр сдвига,
+#     k = L / myu
+#     '''
     return 4 / (mu(X) * (a(X, max_gap) + cur_step))

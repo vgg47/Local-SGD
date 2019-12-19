@@ -26,7 +26,6 @@ batch_size = args.batch_size
 if rank == 0:  
     start_time = time.process_time()
     # генерируем последовательность таймстемпов для синхронизаций
-    # sync_timestamps = np.sort(sts.randint.rvs(low=0, high=steps_number, size=communications_number))
     sync_timestamps = set(np.linspace(1, steps_number, communications_number, dtype=int))
 
     # загружаем данные из файлов
@@ -37,9 +36,8 @@ if rank == 0:
 
     feature_number = full_data.shape[1]
     np.random.seed(17)
-    w = np.hstack([np.arange(1, feature_number + 1)])
 
-    # w = np.hstack([1 , np.random.rand(feature_number - 1)])
+    w = np.hstack([1 , np.random.rand(feature_number - 1)])
     print(f'initial weights: {w}')
     print(f'mse for random weights {mse_metric(full_data, full_labels, w)}')
 
@@ -94,7 +92,7 @@ weight_dist = np.inf
 cur_step = 0
 # работа алгоритма завершается, если  шаг градиентного метода меньше
 # заданного значения или же после определенного количества шагов 
-while (cur_step < steps_number and weight_dist > min_weight_dist):
+while cur_step < steps_number and weight_dist > min_weight_dist:
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
 
     # выбираем размер шага (learning rate)
