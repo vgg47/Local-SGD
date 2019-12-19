@@ -22,7 +22,7 @@ start_time = time.process_time()
 X = loadtxt(args.dataset, delimiter=',')
 y = loadtxt(args.label, delimiter=',')  
 
-def SGD(X, y, min_weight_dist, batch_size=1, steps_number=10**7, delta=0.1):
+def SGD(X, y, min_weight_dist=10**-8, batch_size=1, steps_number=10**7, delta=0.1):
     X = np.hstack([np.ones((X.shape[0], 1)), X])
 
     feature_number = X.shape[1]
@@ -31,11 +31,11 @@ def SGD(X, y, min_weight_dist, batch_size=1, steps_number=10**7, delta=0.1):
 
     w = np.hstack([np.arange(1, feature_number + 1)])
     # w = np.hstack([1 , np.random.rand(feature_number - 1)])
-    print(w)
-    print(f'mse for random weights {mse_metric(X, y, w)}')
+    # print(w)
+    #print(f'mse for random weights {mse_metric(X, y, w)}')
 
-    data_loading_time = time.process_time()
-    print(f'data loading time is {data_loading_time - start_time}')
+    #data_loading_time = time.process_time()
+    #print(f'data loading time is {data_loading_time - start_time}')
 
 
 
@@ -47,8 +47,7 @@ def SGD(X, y, min_weight_dist, batch_size=1, steps_number=10**7, delta=0.1):
         batch_idxs = np.random.randint(X.shape[0], size=batch_size)
 
         # выбираем размер шага (learning rate)
-        step_size = choose_step_size(cur_step) # тут заглушка!!!
-
+        step_size = 0.01#choose_step_size(cur_step) # тут заглушка!!!
         # делаем шаг
         w_new  = gradient_step(X, y, w, batch_idxs, step_size)
         # если текущий таймстемп лежит в множестве синхронизируемых, то синхронизируемся))
@@ -58,10 +57,10 @@ def SGD(X, y, min_weight_dist, batch_size=1, steps_number=10**7, delta=0.1):
         cur_step += 1
 
 
-    final_time = time.process_time()
-    print(f'algorithm time is {final_time - data_loading_time}')
-    print(f'general time is {final_time - start_time}')
-    print(f'final value mse after {cur_step} for 1 worker is {mse_metric(X, y, w)}')
+    #final_time = time.process_time()
+    #print(f'algorithm time is {final_time - data_loading_time}')
+    #print(f'general time is {final_time - start_time}')
+    #print(f'final value mse after {cur_step} for 1 worker is {mse_metric(X, y, w)}')
 
 #n = y.shape[0]
 #for i in range(1, 11):
