@@ -19,7 +19,7 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 steps_number = args.steps
 communications_number = args.sync
-min_weight_dist = args.precision
+min_mse = args.precision
 # batch_size = 50
 batch_size = args.batch_size
 
@@ -88,27 +88,26 @@ data_sending_time = time.process_time()
 if rank == 0:
     print(f'data sending time is {data_sending_time - data_loading_time}')
 
-weight_dist = np.inf
+cur_mse = 1 
 cur_step = 0
 # работа алгоритма завершается, если  шаг градиентного метода меньше
 # заданного значения или же после определенного количества шагов 
-while cur_step < steps_number and weight_dist > min_weight_dist:
+while cur_step < steps_number and cur_mse > min_mse:
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
 
     # выбираем размер шага (learning rate)
     # step_size = choose_step_size(cur_step) # тут заглушка!!!
     step_size = stepsize(X, cur_step, communications_number)
     # делаем шаг
-    w_new  = gradient_step(X, y, w, batch_idxs, step_size)
+    w  = gradient_step(X, y, w, batch_idxs, step_size)
     # если текущий таймстемп лежит в множестве синхронизируемых, то синхронизируемся))
     if cur_step + 1 in sync_timestamps:
-        w_new = sync(w_new, comm)
+        w = sync(w, comm)
     # смотрим на то, как сильно изменились веса
-    weight_dist = distance.euclidean(w, w_new)
-    w = w_new
+    cur_mse = mse_metric(X, y, w)
     cur_step += 1
 
-w_new = sync(w_new, comm)
+w = sync(w, comm)
 
 final_time = time.process_time()
 if rank == 0:

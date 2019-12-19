@@ -16,7 +16,7 @@ def console_args():
     parser.add_argument('--steps', '-s', type=int,
                         help='Запуск алгоритма на указанное количество шагов', default=10**3)
     parser.add_argument('--sync', type=int,
-                        help='WIP', default=1)
+                        help='WIP', default=10**2)
     parser.add_argument('--dataset', '-d',
                         help='Путь к файлу с dataset', default='./data/default_data.csv')
     parser.add_argument('--label', '-l',
@@ -28,5 +28,5 @@ def console_args():
     parser.add_argument('--batch-size', '-b', type=int,
                         help='Размер batch', default=16)
     parser.add_argument('--precision', '-p', type=float,
-                        help='тудуду', default=10 ** -8)
+                        help='тудуду', default=10 ** -5)
     return parser.parse_args()
