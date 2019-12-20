@@ -56,7 +56,6 @@ if rank == 0:
         
         # отправляем начальные веса, таймстемпы, данные и метки !!!! здесь можно заменить на gathering
         comm.Send(w, dest=idx, tag=74) 
-        # comm.Send(sync_timestamps, dest=idx, tag=77) 
         comm.Send(full_data[idx * shard_size: (idx + 1)  * shard_size], dest=idx, tag=78)
         comm.Send(full_labels[idx * shard_size: (idx + 1)  * shard_size], dest=idx, tag=79)
     
@@ -76,7 +75,6 @@ else:
     y = np.empty(shard_size, dtype=np.float64)
     
     comm.Recv(w, source=0, tag=74)
-    # comm.Recv(sync_timestamps, source=0, tag=77)
     comm.Recv(X, source=0, tag=78)
     comm.Recv(y, source=0, tag=79)
     
@@ -91,13 +89,13 @@ if rank == 0:
 cur_mse = 1 
 cur_step = 0
 stopping_criterion = True
+W = np.empty(comm.Get_size(), steps_number)
 # работа алгоритма завершается, если  мсе меньше
 # заданного значения или же после определенного количества шагов 
 while cur_step < steps_number and stopping_criterion:
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
 
     # выбираем размер шага (learning rate)
-    # step_size = choose_step_size(cur_step) # тут заглушка!!!
     step_size = stepsize(X, cur_step, communications_number)
     # делаем шаг
     w  = gradient_step(X, y, w, batch_idxs, step_size)
