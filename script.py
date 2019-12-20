@@ -11,7 +11,7 @@ from mpi4py import MPI
 from numpy import loadtxt
 from scipy.spatial import distance
 
-VERSION = 1
+VERSION = 21
 
 args = console_args()
 
@@ -20,6 +20,7 @@ rank = comm.Get_rank()
 steps_number = args.steps
 communications_number = args.sync
 min_mse = args.precision
+
 batch_size = args.batch_size
 
 #######################################################################
@@ -85,14 +86,18 @@ data_sending_time = time.process_time()
 
 # реализация LocalSGD
 
+cur_mse = 1 
 cur_step = 0
 stopping_criterion = True
+
+
 # работа алгоритма завершается, если  квадрат нормы меньше
 # заданного значения или же после определенного количества шагов 
 while cur_step < steps_number and stopping_criterion:
     if rank == 0 and cur_step % 10 == 0:
         print(mse_metric(X, y, w), cur_step)
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
+
     # выбираем размер шага (learning rate)
     step_size = stepsize(X, cur_step, communications_number)
     # делаем шаг
@@ -103,7 +108,7 @@ while cur_step < steps_number and stopping_criterion:
         # завершаемся, если достигли необходимую точность
         if mse_metric(X, y, w) < min_mse:
             stopping_criterion = False
-
+    
     cur_step += 1
 
 #######################################################################

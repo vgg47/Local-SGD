@@ -1,4 +1,5 @@
 import argparse
+import json
 import functools
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,11 +12,12 @@ from numpy import loadtxt
 from scipy.optimize import minimize
 from simple_grad_descend import SGD
 
-#######################################################################
+V = 21
 
 dataset_name = input('Введи название для файла, хранящего датасет, например data.csv:\n')
 labels_name = input('Введи название для файла, хранящего целевую переменную, например labels.csv:\n')
 step = input('Размер датасета\n')
+
 repeat = input('Сколько раз повторять запуск алгоритма (результаты усредняются):\n')
 draw = int(input('Вы хотите получить рисунок? 0 = Нет, 1 = Да:\n'))
 
@@ -83,8 +85,17 @@ if draw == 1:
         size += step
 
     print(comparsion)
+
+    ##############################################
+
+    logs = json.load(open('logs.json'))
+    t = logs['algorithm_time']
+    v = logs['version']
+    ta = sorted([t[i] for i in range(len(v)) if v[i] == V])
+
     plt.figure(figsize=(12, 8))
     x = comparsion['size']
+    plt.plot(x, ta, label='LSGD')
     plt.plot(x, comparsion['bfgs'], label='BFGS')
     plt.plot(x, comparsion['sgd'], label='SGD')
     plt.plot(x, comparsion['nesterov'], label='Nesterov')

@@ -2,7 +2,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-t = json.load(open('algotimes.json'))
+t = json.load(open('../algotimes.json'))
 ta = t[0]
 tg = t[1]
 plt.figure(figsize=(12, 8))
