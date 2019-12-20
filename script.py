@@ -26,7 +26,7 @@ batch_size = args.batch_size
 if rank == 0:  
     start_time = time.process_time()
     # генерируем последовательность таймстемпов для синхронизаций
-    sync_timestamps = set(np.linspace(1, steps_number, communications_number, dtype=int))
+    sync_timestamps = set(np.arange(1, steps_number, communications_number, dtype=int))
 
     # загружаем данные из файлов
     full_data = loadtxt(args.dataset, delimiter=',')
