@@ -16,7 +16,7 @@ def console_args():
     parser.add_argument('--steps', '-s', type=int,
                         help='Запуск алгоритма на указанное количество шагов', default=10**3)
     parser.add_argument('--sync', type=int,
-                        help='WIP', default=10**2)
+                        help='Maximal gap between synchronizations', default=10**2)
     parser.add_argument('--dataset', '-d',
                         help='Путь к файлу с dataset', default='./data/default_data.csv')
     parser.add_argument('--label', '-l',
