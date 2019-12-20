@@ -10,7 +10,7 @@ def mse_metric(X, y, w):
         y - target feature
         w - weights
     '''
-    return (y - X @ w).T.dot(y - X @ w) / (2 * len(y))
+    return (y - X @ w).T.dot(y - X @ w)
 
 def mae_metric(y, y_pred):
     return sum(np.abs(y - y_pred)) / len(y)
@@ -39,11 +39,6 @@ def sync(w_new, comm):
     # print(f'new value for weigths are received by {comm.Get_rank()}')
 
     return w_new
-
-def choose_step_size(cur_step):
-    # заглушка
-    # return 0.01 / (cur_step + 1)
-    return 10 ** -3
 
 ################################################################
 
@@ -75,4 +70,4 @@ def stepsize(X, cur_step, max_gap):
 #     a = max(16k, H) - параметр сдвига,
 #     k = L / myu
 #     '''
-    return 4 / (mu(X) * (a(X, max_gap) + cur_step))
+    return 4 / (mu(X) * (a(X, max_gap) + 1))

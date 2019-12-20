@@ -6,7 +6,7 @@ import sys
 import time
 
 from console_args import console_args
-from gradient_computing import gradient_step, sync, choose_step_size, mse_metric, stepsize
+from gradient_computing import gradient_step, sync, mse_metric, stepsize
 from mpi4py import MPI
 from numpy import loadtxt
 from scipy.spatial import distance
@@ -90,6 +90,8 @@ stopping_criterion = True
 # работа алгоритма завершается, если  мсе меньше
 # заданного значения или же после определенного количества шагов 
 while cur_step < steps_number and stopping_criterion:
+    if rank == 0 and cur_step % 100 == 0:
+        print(mse_metric(X,y, w))
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
     # выбираем размер шага (learning rate)
     step_size = stepsize(X, cur_step, communications_number)
