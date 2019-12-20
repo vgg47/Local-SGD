@@ -6,12 +6,12 @@ import scipy.stats as sts
 import sys
 import os
 
-def f(x):
+def f(x, feature_number):
     return x @ sts.uniform.rvs(size=feature_number)
 
 def create_data(dataset_size, feature_number):
     X = sts.uniform.rvs(loc=1, scale=1, size=(dataset_size, feature_number))
-    y = f(X) + sts.norm(0, scale=0.1).rvs(size=dataset_size)
+    y = f(X, feature_number) + sts.norm(0, scale=0.1).rvs(size=dataset_size)
     return X, y
 
 def main():
