@@ -14,8 +14,6 @@ from simple_grad_descend import SGD
 
 V = 21
 
-##########################
-
 dataset_name = input('Введи название для файла, хранящего датасет, например data.csv:\n')
 labels_name = input('Введи название для файла, хранящего целевую переменную, например labels.csv:\n')
 step = input('Размер датасета\n')
@@ -36,7 +34,8 @@ if not repeat:
 else:
     repeat = int(repeat)
 
-##########################
+#######################################################################
+
 
 def mse_test(w, X=None, y=None):
     return mse_metric(X, y, w)
@@ -79,7 +78,7 @@ if draw == 1:
             nesterov_descent(mse, L(X_part), init, grad)
             stop_nest += time.time()
 
-        comparsion['bfgs'].append((stop_bfgs-start_bfgs) / repeat)
+        comparsion['bfgs'].append((stop_bfgs - start_bfgs) / repeat)
         comparsion['sgd'].append((stop_sgd - start_sgd) / repeat)
         comparsion['nesterov'].append((stop_nest - start_nest) / repeat)
         comparsion['size'].append(size)
@@ -100,7 +99,7 @@ if draw == 1:
     plt.plot(x, comparsion['bfgs'], label='BFGS')
     plt.plot(x, comparsion['sgd'], label='SGD')
     plt.plot(x, comparsion['nesterov'], label='Nesterov')
-    plt.xticks(np.arange(11)*10000)
+    plt.xticks(np.arange(11) * 10000)
     plt.xlabel('Размер', fontsize=15)
     plt.ylabel('Время', fontsize=15)
     plt.title('Зависимость времени работы методов от размера датасета', fontsize=15)
@@ -118,5 +117,5 @@ L = np.max(np.linalg.eig(2 * X.T @ X)[0])
 a = time.time()
 x = nesterov_descent(mse, L, init, grad)
 b = time.time()
-print(b-a)
+print(b - a)
 print(mse(x))
