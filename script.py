@@ -89,7 +89,6 @@ if rank == 0:
 cur_mse = 1 
 cur_step = 0
 stopping_criterion = True
-W = np.empty(comm.Get_size(), steps_number)
 # работа алгоритма завершается, если  мсе меньше
 # заданного значения или же после определенного количества шагов 
 while cur_step < steps_number and stopping_criterion:
