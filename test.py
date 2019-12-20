@@ -11,16 +11,28 @@ from numpy import loadtxt
 from scipy.optimize import minimize
 from simple_grad_descend import SGD
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', '-d',
-                        help='Путь к файлу с dataset', default='./data/default_data.csv')
-    parser.add_argument('--label', '-l',
-                        help='Путь к файлу с label', default='./data/default_labels.csv')
-    parser.add_argument('--step', type=int, default=10000)
-    parser.add_argument('--repeat', type=int, default=5)
-    parser.add_argument('--draw', type=int, default=0)
-    return parser.parse_args()
+##########################
+
+dataset_name = input('Введи название для файла, хранящего датасет, например data.csv:\n')
+labels_name = input('Введи название для файла, хранящего целевую переменную, например labels.csv:\n')
+step = input('Размер датасета\n')
+repeat = input('Сколько раз повторять запуск алгоритма (результаты усредняются):\n')
+draw = int(input('Вы хотите получить рисунок? 0 = Нет, 1 = Да:\n'))
+
+if not dataset_name:
+    dataset_name = './data/default_data.csv'
+if not labels_name:
+    labels_name = './data/default_labels.csv'
+if not step:
+    step = 10000
+else:
+    step = int(step)
+if not repeat:
+    repeat = 5
+else:
+    repeat = int(repeat)
+
+##########################
 
 def mse_test(w, X=None, y=None):
     return mse_metric(X, y, w)
@@ -28,14 +40,14 @@ def mse_test(w, X=None, y=None):
 def mse_grad_test(w, X=None, y=None):
     return mse_grad(X, y, w)
 
-args = parse_args()
-X = loadtxt(args.dataset, delimiter=',')
-y = loadtxt(args.label, delimiter=',') 
+X = loadtxt(dataset_name, delimiter=',')
+y = loadtxt(labels_name, delimiter=',') 
 n = y.shape[0]
-size = args.step
+
+size = step
 comparsion = {'bfgs': [], 'sgd': [], 'nesterov': [], 'size': []}
 
-if args.draw == 1:
+if draw == 1:
     while(size <= n):
         print(f'Counting...Size={size}')
         
@@ -47,7 +59,7 @@ if args.draw == 1:
         start_bfgs, stop_bfgs = 0, 0
         start_sgd, stop_sgd = 0, 0
         start_nest, stop_nest = 0, 0
-        for _ in range(args.repeat):
+        for _ in range(repeat):
             #BFGS
             start_bfgs += time.time()
             minimize(mse, init, method='BFGS', jac=grad)
@@ -63,11 +75,11 @@ if args.draw == 1:
             nesterov_descent(mse, L(X_part), init, grad)
             stop_nest += time.time()
 
-        comparsion['bfgs'].append((stop_bfgs-start_bfgs) / args.repeat)
-        comparsion['sgd'].append((stop_sgd - start_sgd) / args.repeat)
-        comparsion['nesterov'].append((stop_nest - start_nest) / args.repeat)
+        comparsion['bfgs'].append((stop_bfgs-start_bfgs) / repeat)
+        comparsion['sgd'].append((stop_sgd - start_sgd) / repeat)
+        comparsion['nesterov'].append((stop_nest - start_nest) / repeat)
         comparsion['size'].append(size)
-        size += args.step
+        size += step
 
     print(comparsion)
     plt.figure(figsize=(12, 8))
@@ -84,30 +96,11 @@ if args.draw == 1:
 
 
 
-
-
 mse = functools.partial(mse_test, X=X, y=y)
 grad = functools.partial(mse_grad_test, X=X, y=y)
 
-
-
-
-
-
-#make_plot(args)
-#ans1 = minimize(mse, init)
-#ans2 = minimize(mse, init, method='nelder-mead')
-#ans3 = minimize(mse, init, method='powell')
 init = np.ones(X.shape[1])
-#ans4 = minimize(mse, init, method='BFGS')
-#print(ans4)
-#a = time.time()
-#ans5 = minimize(mse, init, method='BFGS', jac=grad)
-#b = time.time()
-#print(b-a)
-#print(ans5)
-#print(ans5)
-#print(ans1.fun, ans2.fun, ans3.fun)
+
 L = np.max(np.linalg.eig(2 * X.T @ X)[0])
 a = time.time()
 x = nesterov_descent(mse, L, init, grad)
