@@ -93,8 +93,8 @@ stopping_criterion = True
 
 # работа алгоритма завершается, если  квадрат нормы меньше
 # заданного значения или же после определенного количества шагов 
-while cur_step < steps_number and stopping_criterion:
-    if rank == 0 and cur_step % 10 == 0:
+while cur_step <= steps_number and stopping_criterion:
+    if rank == 0 and cur_step % 100 == 0:
         print(mse_metric(X, y, w), cur_step)
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
 

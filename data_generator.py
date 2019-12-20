@@ -18,9 +18,14 @@ def create_data(dataset_size, feature_number):
 def main():
     dataset_size = int(input('Введи количество строк в генерируемом датасете:\n'))
     feature_number = int(input('Введи количество фичей в генерируемом датасете:\n'))
-    dataset_name = input('Введи название для файла, хранящего датасет, например data.csv:\n')
-    labels_name = input('Введи название для файла, хранящего целевую переменную, например labels.csv:\n')
+    dataset_name = input('Введи название для файла, хранящего датасет, например data.csv (или скипните):\n')
+    labels_name = input('Введи название для файла, хранящего целевую переменную, например labels.csv (или скипните):\n')
     print('Созданные файлы находятся в директории ./data')
+
+    if dataset_name == '':
+	    dataset_name = 'default_data.csv'
+    if labels_name == '':
+        labels_name = 'default_labels.csv'
 
     X, y = create_data(dataset_size, feature_number)
 
