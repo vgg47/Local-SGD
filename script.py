@@ -20,13 +20,12 @@ rank = comm.Get_rank()
 steps_number = args.steps
 communications_number = args.sync
 min_mse = args.precision
-# batch_size = 50
 batch_size = args.batch_size
 
 if rank == 0:  
     start_time = time.process_time()
     # генерируем последовательность таймстемпов для синхронизаций
-    sync_timestamps = set(np.arange(1, steps_number, communications_number, dtype=int))
+    sync_timestamps = set(np.arange(1, steps_number, communications_number - 1, dtype=int)) | {steps_number}
 
     # загружаем данные из файлов
     full_data = loadtxt(args.dataset, delimiter=',')
@@ -35,7 +34,7 @@ if rank == 0:
     full_data = np.hstack([np.ones((full_data.shape[0], 1)), full_data])
 
     feature_number = full_data.shape[1]
-    np.random.seed(17)
+    # np.random.seed(17)
 
     w = np.hstack([1 , np.random.rand(feature_number - 1)])
     print(f'initial weights: {w}')
@@ -86,7 +85,6 @@ data_sending_time = time.process_time()
 if rank == 0:
     print(f'data sending time is {data_sending_time - data_loading_time}')
 
-cur_mse = 1 
 cur_step = 0
 stopping_criterion = True
 # работа алгоритма завершается, если  мсе меньше
@@ -101,13 +99,12 @@ while cur_step < steps_number and stopping_criterion:
     # если текущий таймстемп лежит в множестве синхронизируемых, то синхронизируемся))
     if cur_step + 1 in sync_timestamps:
         w = sync(w, comm)
-    # смотрим на то, как сильно изменились веса
-    cur_mse = mse_metric(X, y, w)
-    if rank == 0 and cur_mse > min_mse:
-        stopping_criterion = comm.bcast(False, root=0)
+        # завершаемся, если достигли необходимую точность
+        if mse_metric(X, y, w) < min_mse:
+            stopping_criterion = False
+
     cur_step += 1
 
-w = sync(w, comm)
 
 final_time = time.process_time()
 if rank == 0:
