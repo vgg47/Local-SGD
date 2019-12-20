@@ -1,13 +1,13 @@
-for worker in range(21):
+for worker in range(1, 21, 2):
     print ("mpiexec --oversubscribe -n " + 
-        str(worker) + " python3 script.py -s " + 
-        str(1) + " -b " + str(1))
+        str(worker) + " python3 script.py --sync " + 
+        str(256) + " -b " + str(4))
     print ("mpiexec --oversubscribe -n " + 
-        str(worker) + " python3 script.py -s " + 
-        str(1) + " -b " + str(2))
+        str(worker) + " python3 script.py --sync " + 
+        str(256) + " -b " + str(16))
     print ("mpiexec --oversubscribe -n " + 
-        str(worker) + " python3 script.py -s " + 
-        str(2) + " -b " + str(1))
+        str(worker) + " python3 script.py --sync " + 
+        str(256) + " -b " + str(32))
     print ("mpiexec --oversubscribe -n " + 
-        str(worker) + " python3 script.py -s " + 
-        str(2) + " -b " + str(2))
+        str(worker) + " python3 script.py --sync " + 
+        str(256) + " -b " + str(256))

@@ -6,7 +6,7 @@ import time
 from numpy import loadtxt
 from simple_grad_descend import SGD
 
-V = 11
+V = 20
 
 ##############################################
 
@@ -45,17 +45,17 @@ while i < len(ta):
     h2b2.append(ta[i])
     i += 1
 
-x = np.arange(1, 21, 1)
+x = np.arange(1, 21, 2)
 
 plt.figure(figsize=(12, 8))
 
-plt.plot(x, h1b1, label='h = 1, b = 1')
-plt.plot(x, h1b2, label='h = 1, b = 2')
-plt.plot(x, h1b2, label='h = 2, b = 1')
-plt.plot(x, h1b2, label='h = 2, b = 2')
+plt.plot(x, h1b1, label='b = 4')
+plt.plot(x, h1b2, label='b = 16')
+plt.plot(x, h2b1, label='b = 32')
+plt.plot(x, h2b2, label='b = 256')
 
 plt.xlabel('Количество работников', fontsize=15)
 plt.ylabel('Ускорение по сравнению с SGD', fontsize=15)
-plt.title("Зависимость ускорения от количества работников", fontsize=15)
+plt.title("Зависимость ускорения от mini-batch size", fontsize=15)
 plt.legend()
 plt.savefig('./img/test_bs_h')
