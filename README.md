@@ -11,6 +11,7 @@
 Добавьте все необходимые пакеты:
 	
 	module add python/3.7 tensorflow/1.14 mpi/openmpi4-x86_64 
+	pip install scipy mpi4py --user
 
 Для запуска алгоритма выполните команду
 
