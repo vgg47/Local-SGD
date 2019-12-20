@@ -12,7 +12,7 @@ from numpy import loadtxt
 from scipy.optimize import minimize
 from simple_grad_descend import SGD
 
-V = 17
+V = 21
 
 ##########################
 

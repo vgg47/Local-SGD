@@ -1,3 +1,6 @@
+'''
+Рисует графики с зависимостью ускорения от b и/или h
+'''
 import json
 import matplotlib.pyplot as plt
 import numpy as np

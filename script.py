@@ -11,7 +11,7 @@ from mpi4py import MPI
 from numpy import loadtxt
 from scipy.spatial import distance
 
-VERSION = 11
+VERSION = 21
 
 args = console_args()
 
@@ -81,7 +81,7 @@ else:
 
 sync_timestamps = comm.bcast(sync_timestamps, root=0)
 
-# тутачки начинается градиентный спуск
+# здесь начинается градиентный спуск
 data_sending_time = time.process_time()
 if rank == 0:
     print(f'data sending time is {data_sending_time - data_loading_time}')
@@ -112,9 +112,9 @@ w = sync(w, comm)
 
 final_time = time.process_time()
 if rank == 0:
-    print(f'algorithm time is {final_time - data_sending_time}')
-    print(f'general time is {final_time - start_time}')
-    print(f'final value mse after {steps_number} for {comm.size} workers is {mse_metric(full_data, full_labels, w)}')
+    # print(f'algorithm time is {final_time - data_sending_time}')
+    # print(f'general time is {final_time - start_time}')
+    # print(f'final value mse after {steps_number} for {comm.size} workers is {mse_metric(full_data, full_labels, w)}')
     with open('logs.json') as logfile:
         logs = json.load(logfile)
     logs['general_time'].append(final_time - start_time)
