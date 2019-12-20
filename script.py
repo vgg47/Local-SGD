@@ -11,7 +11,7 @@ from mpi4py import MPI
 from numpy import loadtxt
 from scipy.spatial import distance
 
-VERSION = 1
+VERSION = 11
 
 args = console_args()
 
