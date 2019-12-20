@@ -91,7 +91,6 @@ stopping_criterion = True
 # заданного значения или же после определенного количества шагов 
 while cur_step < steps_number and stopping_criterion:
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
-
     # выбираем размер шага (learning rate)
     step_size = stepsize(X, cur_step, communications_number)
     # делаем шаг
