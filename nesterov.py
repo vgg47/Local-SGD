@@ -4,7 +4,6 @@ import math
 def nesterov_descent(func, L, init_x, gradient_func, epsilon=0.05):
     
     x = init_x
-
     lambda_prev = 0
     lambda_curr = 1
     gamma = 1
@@ -23,7 +22,5 @@ def nesterov_descent(func, L, init_x, gradient_func, epsilon=0.05):
         lambda_prev = lambda_tmp
 
         gamma = (1 - lambda_prev) / lambda_curr
-
         gradient = gradient_func(x)
-
     return x

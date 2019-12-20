@@ -22,6 +22,10 @@ communications_number = args.sync
 min_mse = args.precision
 batch_size = args.batch_size
 
+#######################################################################
+
+# распределение данных по воркерам и другие подготовительные действия
+
 if rank == 0:  
     start_time = time.process_time()
     # генерируем последовательность таймстемпов для синхронизаций
@@ -34,18 +38,13 @@ if rank == 0:
     full_data = np.hstack([np.ones((full_data.shape[0], 1)), full_data])
 
     feature_number = full_data.shape[1]
-    # np.random.seed(17)
 
     w = np.hstack([1 , np.random.rand(feature_number - 1)])
-    print(f'initial weights: {w}')
-    print(f'mse for random weights {mse_metric(full_data, full_labels, w)}')
-
 
     # определяем размер батча для каждого воркера
     shard_size = int(full_data.shape[0] / comm.Get_size())
     
     data_loading_time = time.process_time()
-    print(f'data loading time is {data_loading_time - start_time}')
     # рассылаем данные по воркерам
     for idx in range(1, comm.size):
         
@@ -80,18 +79,19 @@ else:
 
 sync_timestamps = comm.bcast(sync_timestamps, root=0)
 
-# тутачки начинается градиентный спуск
 data_sending_time = time.process_time()
-if rank == 0:
-    print(f'data sending time is {data_sending_time - data_loading_time}')
+
+#######################################################################
+
+# реализация LocalSGD
 
 cur_step = 0
 stopping_criterion = True
-# работа алгоритма завершается, если  мсе меньше
+# работа алгоритма завершается, если  квадрат нормы меньше
 # заданного значения или же после определенного количества шагов 
 while cur_step < steps_number and stopping_criterion:
-    if rank == 0 and cur_step % 100 == 0:
-        print(mse_metric(X,y, w))
+    if rank == 0 and cur_step % 10 == 0:
+        print(mse_metric(X, y, w), cur_step)
     batch_idxs = np.random.randint(X.shape[0], size=batch_size)
     # выбираем размер шага (learning rate)
     step_size = stepsize(X, cur_step, communications_number)
@@ -106,12 +106,16 @@ while cur_step < steps_number and stopping_criterion:
 
     cur_step += 1
 
+#######################################################################
+
+# логгируем результаты
 
 final_time = time.process_time()
+
 if rank == 0:
-    print(f'algorithm time is {final_time - data_sending_time}')
-    print(f'general time is {final_time - start_time}')
-    print(f'final value mse after {steps_number} for {comm.size} workers is {mse_metric(full_data, full_labels, w)}')
+    # print(f'algorithm time is {final_time - data_sending_time}')
+    # print(f'general time is {final_time - start_time}')
+    # print(f'final value mse after {steps_number} for {comm.size} workers is {mse_metric(full_data, full_labels, w)}')
     with open('logs.json') as logfile:
         logs = json.load(logfile)
     logs['general_time'].append(final_time - start_time)
